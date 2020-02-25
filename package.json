@@ -27,7 +27,7 @@
   ],
   "devDependencies": {
     "@types/jest": "24.0.25",
-    "@types/puppeteer": "1.19.1",
+    "@types/puppeteer": "2.0.1",
     "auto-changelog": "1.15.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.9.0",
@@ -36,7 +36,7 @@
     "jest": "24.9.0",
     "lint-staged": "9.5.0",
     "prettier": "1.19.1",
-    "puppeteer": "1.19.0",
+    "puppeteer": "2.1.1",
     "release-it": "10.4.5",
     "rollup": "1.20.3",
     "rollup-plugin-typescript": "1.0.1",
