@@ -1,18 +1,18 @@
 {
-  "name": "pending-xhr-puppeteer",
+  "name": "@mendelgusmao/pending-xhr-puppeteer",
   "node": ">= 8.0.0",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Small tool for wait that all xhr are finished in pupeteer",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "module": "lib/es.js",
-  "homepage": "https://github.com/jtassin/pending-xhr-puppeteer",
+  "homepage": "https://github.com/mendelgusmao/pending-xhr-puppeteer",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jtassin/pending-xhr-puppeteer.git"
+    "url": "https://github.com/mendelgusmao/pending-xhr-puppeteer.git"
   },
   "bugs": {
-    "url": "https://github.com/jtassin/pending-xhr-puppeteer/issues"
+    "url": "https://github.com/mendelgusmao/pending-xhr-puppeteer/issues"
   },
   "author": "Julien TASSIN",
   "license": "MIT",
