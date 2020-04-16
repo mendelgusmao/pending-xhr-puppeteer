@@ -12,7 +12,9 @@ export class PendingXHR {
   finishedWithSuccessXhrs: Set<Request>;
   finishedWithErrorsXhrs: Set<Request>;
   promisees: Array<Promise<void>>
-  listener: (request: ResolvableRequest) => void;
+  requestListener: (request: ResolvableRequest) => void;
+  requestFailedListener: (request: ResolvableRequest) => void;
+  requestFinishedListener: (request: ResolvableRequest) => void;
 
   constructor(page: Page) {
     this.promisees = [];
@@ -22,7 +24,7 @@ export class PendingXHR {
     this.finishedWithSuccessXhrs = new Set();
     this.finishedWithErrorsXhrs = new Set();
 
-    this.listener = (request: ResolvableRequest) => {
+    this.requestListener = (request: ResolvableRequest) => {
       if (request.resourceType() === this.resourceType) {
         this.pendingXhrs.add(request);
         this.promisees.push(
@@ -33,8 +35,7 @@ export class PendingXHR {
       }
     };
 
-    page.on('request', this.listener);
-    page.on('requestfailed', (request: ResolvableRequest) => {
+    this.requestFailedListener = (request: ResolvableRequest) => {
       if (request.resourceType() === this.resourceType) {
         this.pendingXhrs.delete(request);
         this.finishedWithErrorsXhrs.add(request);
@@ -43,8 +44,9 @@ export class PendingXHR {
           delete request.resolver;
         }
       }
-    });
-    page.on('requestfinished', (request: ResolvableRequest) => {
+    };
+
+    this.requestFinishedListener = (request: ResolvableRequest) => {
       if (request.resourceType() === this.resourceType) {
         this.pendingXhrs.delete(request);
         this.finishedWithSuccessXhrs.add(request);
@@ -53,7 +55,11 @@ export class PendingXHR {
           delete request.resolver;
         }
       }
-    });
+    };
+
+    page.on('request', this.requestListener);
+    page.on('requestfailed', this.requestFailedListener);
+    page.on('requestfinished', this.requestFinishedListener);
   }
 
   async waitForAllXhrFinished() {
@@ -61,7 +67,9 @@ export class PendingXHR {
       return;
     }
     await Promise.all(this.promisees);
-    this.page.removeListener('request', this.listener);
+    this.page.removeListener('request', this.requestListener);
+    this.page.removeListener('requestfailed', this.requestFailedListener);
+    this.page.removeListener('requestfinished', this.requestFinishedListener);
   }
 
   pendingXhrCount() {
