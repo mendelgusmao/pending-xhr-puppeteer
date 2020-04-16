@@ -12,16 +12,17 @@ export class PendingXHR {
   finishedWithSuccessXhrs: Set<Request>;
   finishedWithErrorsXhrs: Set<Request>;
   promisees: Array<Promise<void>>
+  listener: (request: ResolvableRequest) => void;
 
   constructor(page: Page) {
     this.promisees = [];
     this.page = page;
     this.resourceType = 'xhr';
-    // page.setRequestInterception(true);
     this.pendingXhrs = new Set();
     this.finishedWithSuccessXhrs = new Set();
     this.finishedWithErrorsXhrs = new Set();
-    page.on('request', (request: ResolvableRequest) => {
+
+    this.listener = (request: ResolvableRequest) => {
       if (request.resourceType() === this.resourceType) {
         this.pendingXhrs.add(request);
         this.promisees.push(
@@ -30,7 +31,9 @@ export class PendingXHR {
           }),
         );
       }
-    });
+    };
+
+    page.on('request', this.listener);
     page.on('requestfailed', (request: ResolvableRequest) => {
       if (request.resourceType() === this.resourceType) {
         this.pendingXhrs.delete(request);
@@ -58,6 +61,7 @@ export class PendingXHR {
       return;
     }
     await Promise.all(this.promisees);
+    this.page.removeListener('request', this.listener);
   }
 
   pendingXhrCount() {
